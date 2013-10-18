@@ -1,5 +1,4 @@
 import java.io.*;
-import java.io.*;
 import java.net.*;
 
 public class Cliente {
@@ -12,35 +11,29 @@ public class Cliente {
         DataInputStream teclado = new DataInputStream(System.in);
 
         //Geração do socket
-        Socket clientSocket = null;
-        
+        Socket ClientSocket = null;
 
         try {
         /* cria o socket do cliente para conexao com o servidor
-           que esta na maquina 127.0.0.1 operando na porta 7000 */
+           que esta na maquina work1 operando na porta 4444 */
 
-            clientSocket = new Socket("127.0.0.1",7000); /** SOCKET - CONNECT **/
+            ClientSocket = new Socket("127.0.0.1", 9999);
             /* associa um buffer de entrada e outro de saida ao socket */
-            in = new DataInputStream(clientSocket.getInputStream());    // aponta o duto de entrada para o socket do cliente
-            out = new PrintStream(clientSocket.getOutputStream());       // aponta o duto de saída para o socket do cliente
+            in = new DataInputStream(ClientSocket.getInputStream());    // aponta o duto de entrada para o socket do cliente
+            out = new PrintStream(ClientSocket.getOutputStream());       // aponta o duto de saída para o socket do cliente
 
             //aguarda uma digitação pelo teclado para enviar ao servidor
             System.out.println(in.readLine());
             while (true) {
                 System.out.print("Digite: ");
-                String enviar;
-                String receber;
-                enviar = teclado.readLine();
-                out.println(enviar); /** SEND **/
-                if (enviar.toUpperCase().equals("FIM")) {
-                    receber = in.readLine();
-                    System.out.println("Servidor retornou: " + receber);
+                String enviar = teclado.readLine();
+                out.println(enviar);
+                if (enviar.equals("fim")) {
                     break;
                 }
-                receber = in.readLine(); /** RECV**/
-                System.out.println("Servidor retornou: " + receber);
+                String receber = in.readLine();
+                System.out.println(receber);
             }
-            clientSocket.close();
         } catch (UnknownHostException e) {
             System.err.println("Host desconhecido: ");
             System.exit(1);

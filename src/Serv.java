@@ -1,7 +1,9 @@
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 /*
@@ -15,8 +17,8 @@ import java.net.Socket;
 public class Serv extends Thread {
 
     String line;                        // string para conter informações transferidas
-    DataInputStream is;                 // cria um duto de entrada
-    PrintStream os;                     // cria um duto de saída
+    BufferedReader in;                 // cria um duto de entrada
+    BufferedWriter os;                     // cria um duto de saída
     Socket clientSocket;         // cria o socket do cliente
 
     public Serv(Socket cliente) {
@@ -26,18 +28,21 @@ public class Serv extends Thread {
     @Override
     public void run() {
         try {
-            is = new DataInputStream(clientSocket.getInputStream());    // aponta o duto de entrada para o socket do cliente
-            os = new PrintStream(clientSocket.getOutputStream());       // aponta o duto de saída para o socket do cliente
-            os.println("Servidor responde: Conexao efetuada com o servidor");
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));    // aponta o duto de entrada para o socket do cliente
+            os = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));       // aponta o duto de saída para o socket do cliente
+            os.write("Servidor responde: Conexao efetuada com o servidor \n");
+            os.flush();
             while (true) {
-                line = is.readLine();                           // recebe dados do cliente
+                line = in.readLine();                           // recebe dados do cliente
                 if (line.toUpperCase().equals("FIM")) {
                     System.out.println("O cliente desligou-se");
-                    os.println("Encerrando Conexão!");
+                    os.write("Encerrando Conexão!\n");
+                    os.flush();
                     clientSocket.close();
                 } else {
                     System.out.println("Cliente enviou: " + line);
-                    os.println(line.toUpperCase());     // envia dados para o cliente    
+                    os.write(line.toUpperCase()+ "\n");
+                    os.flush();// envia dados para o cliente    
                 }
             }
         } catch (IOException e) {
